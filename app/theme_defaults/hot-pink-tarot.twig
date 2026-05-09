@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hot Pink Cosmic Cowgirl Tarot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Monoton&family=Nunito:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pink-neon: #ff3aad;
+            --pink-soft: #ffb6e6;
+            --pink-deep: #b10069;
+            --violet-space: #39194b;
+            --golden-sunset: #ffd166;
+            --cowgirl-shadow: rgba(22, 7, 31, 0.55);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Nunito', sans-serif;
+            background: radial-gradient(circle at top left, #ff82d3 0%, #ff0099 35%, #471757 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2.5rem 1.5rem 4rem;
+            gap: 2.5rem;
+        }
+
+        header {
+            text-align: center;
+        }
+
+        .title-badge {
+            font-family: 'Monoton', cursive;
+            font-size: clamp(3rem, 6vw, 5rem);
+            letter-spacing: 0.25rem;
+            color: var(--golden-sunset);
+            text-shadow: 0 0 12px rgba(255, 214, 102, 0.8), 0 0 30px rgba(255, 58, 173, 0.7);
+        }
+
+        .subtitle {
+            margin-top: 0.75rem;
+            font-size: clamp(1.05rem, 2.5vw, 1.35rem);
+            max-width: 720px;
+            line-height: 1.6;
+            background: rgba(17, 4, 24, 0.45);
+            padding: 1.1rem 1.6rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 214, 102, 0.2);
+        }
+
+        .reader-layout {
+            width: min(1200px, 100%);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.75rem;
+        }
+
+        .panel {
+            background: rgba(20, 4, 31, 0.55);
+            border: 1px solid rgba(255, 182, 230, 0.3);
+            border-radius: 2rem;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(6px);
+        }
+
+        .panel::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(120deg, transparent 30%, rgba(255, 58, 173, 0.15), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .panel:hover::after {
+            opacity: 1;
+        }
+
+        h2 {
+            font-family: 'Monoton', cursive;
+            letter-spacing: 0.14rem;
+            text-transform: uppercase;
+            margin: 0 0 1.5rem;
+            font-size: 1.6rem;
+            color: var(--pink-soft);
+        }
+
+        .deck-stack {
+            position: relative;
+            height: 320px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 1200px;
+        }
+
+        .card {
+            width: 210px;
+            height: 320px;
+            border-radius: 1.2rem;
+            padding: 1.25rem;
+            background: linear-gradient(160deg, rgba(255, 255, 255, 0.95), rgba(255, 214, 246, 0.85));
+            color: #3d0656;
+            box-shadow: 0 25px 40px rgba(0, 0, 0, 0.35);
+            position: absolute;
+            transition: transform 0.6s ease, opacity 0.6s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 3px double var(--pink-deep);
+            backface-visibility: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            inset: 18px;
+            border-radius: 0.85rem;
+            background: conic-gradient(from 120deg, rgba(255, 58, 173, 0.18), rgba(255, 214, 102, 0.16), rgba(58, 255, 247, 0.18), rgba(255, 58, 173, 0.18));
+            filter: blur(0.6px);
+            z-index: 0;
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1.1rem;
+            height: 100%;
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 1.3rem;
+            letter-spacing: 0.08rem;
+        }
+
+        .card-archetype {
+            text-transform: uppercase;
+            font-size: 0.78rem;
+            letter-spacing: 0.22rem;
+            color: var(--pink-deep);
+        }
+
+        .card-meaning {
+            font-size: 0.95rem;
+            line-height: 1.55;
+        }
+
+        .card-footer {
+            font-size: 0.75rem;
+            letter-spacing: 0.2rem;
+            text-transform: uppercase;
+            color: rgba(61, 6, 86, 0.72);
+        }
+
+        .card.hidden {
+            opacity: 0;
+            transform: translateY(40px) rotate(-6deg) scale(0.96);
+            pointer-events: none;
+        }
+
+        .card.active {
+            opacity: 1;
+            transform: translateY(-10px) rotate(2deg) scale(1.03);
+            pointer-events: auto;
+        }
+
+        .cowgirl-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.65rem 1.1rem;
+            border-radius: 999px;
+            background: rgba(255, 58, 173, 0.2);
+            color: var(--golden-sunset);
+            font-weight: 600;
+            letter-spacing: 0.12rem;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1.25rem;
+            justify-content: center;
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--pink-neon), var(--pink-deep));
+            color: white;
+            border: none;
+            border-radius: 999px;
+            padding: 0.8rem 1.6rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.08rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            box-shadow: 0 16px 30px rgba(255, 58, 173, 0.35);
+        }
+
+        button:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 22px 40px rgba(255, 58, 173, 0.5);
+        }
+
+        button:focus-visible {
+            outline: 3px solid var(--golden-sunset);
+            outline-offset: 3px;
+        }
+
+        .vibes, .spread, .history {
+            display: grid;
+            gap: 1.25rem;
+        }
+
+        .vibe-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 1.5rem;
+            padding: 1.3rem;
+            border: 1px solid rgba(255, 214, 246, 0.2);
+            box-shadow: inset 0 0 0 1px rgba(255, 182, 230, 0.08);
+            display: grid;
+            gap: 0.65rem;
+        }
+
+        .vibe-card h3 {
+            margin: 0;
+            font-size: 0.95rem;
+            letter-spacing: 0.18rem;
+            text-transform: uppercase;
+            color: var(--pink-soft);
+        }
+
+        .vibe-card p {
+            margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .spread-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        .spread-step {
+            padding: 1.1rem;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 1.1rem;
+            border: 1px solid rgba(255, 214, 102, 0.18);
+            display: grid;
+            gap: 0.7rem;
+        }
+
+        .spread-step strong {
+            display: block;
+            font-size: 0.9rem;
+            letter-spacing: 0.16rem;
+            text-transform: uppercase;
+            color: var(--golden-sunset);
+        }
+
+        .spread-detail {
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 0.85rem;
+            border: 1px solid rgba(255, 214, 246, 0.12);
+            padding: 0.8rem 1rem;
+            display: grid;
+            gap: 0.45rem;
+            min-height: 110px;
+        }
+
+        .spread-card-name {
+            font-size: 0.78rem;
+            letter-spacing: 0.2rem;
+            text-transform: uppercase;
+            color: rgba(255, 214, 246, 0.75);
+        }
+
+        .spread-grid[data-mode="single"] .spread-card-name {
+            color: var(--pink-soft);
+        }
+
+        .spread-grid[data-mode="multi"] .spread-card-name {
+            color: var(--golden-sunset);
+        }
+
+        .spread-card-meaning {
+            margin: 0;
+            font-size: 0.93rem;
+            line-height: 1.55;
+        }
+
+        .history-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 0.8rem;
+        }
+
+        .history-list li {
+            padding: 1rem 1.1rem;
+            background: rgba(255, 255, 255, 0.07);
+            border-radius: 1rem;
+            display: grid;
+            gap: 0.55rem;
+            border: 1px solid rgba(255, 58, 173, 0.18);
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 0.6rem;
+        }
+
+        .history-entry-title {
+            font-weight: 700;
+            letter-spacing: 0.1rem;
+        }
+
+        .history-timestamp {
+            font-size: 0.75rem;
+            letter-spacing: 0.18rem;
+            text-transform: uppercase;
+            color: rgba(255, 214, 246, 0.65);
+        }
+
+        .history-meaning {
+            display: grid;
+            gap: 0.35rem;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .history-meaning span {
+            color: rgba(255, 214, 246, 0.85);
+        }
+
+        .empty-history {
+            text-align: center;
+            font-size: 0.95rem;
+            color: rgba(255, 182, 230, 0.7);
+        }
+
+        footer {
+            text-align: center;
+            color: rgba(255, 214, 246, 0.8);
+            letter-spacing: 0.12rem;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 820px) {
+            body {
+                padding: 2rem 1rem 3rem;
+            }
+
+            .reader-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .deck-stack {
+                height: auto;
+                min-height: 280px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="cowgirl-badge">Cosmic Cowgirl Rodeo Club</div>
+        <h1 class="title-badge">Hot Pink Tarot Rodeo</h1>
+        <p class="subtitle">
+            Saddle up, star child! This deck celebrates the fearless energy of neon-lit rodeos,
+            moonlit desert trails, and the unstoppable sparkle of every Barbie-hearted cowgirl.
+            Draw a card, breathe in the glitter, and let your intuition two-step with the cosmos.
+        </p>
+    </header>
+
+    <main class="reader-layout">
+        <section class="panel" aria-labelledby="deck-title">
+            <h2 id="deck-title">Card Corral</h2>
+            <div class="deck-stack" aria-live="polite">
+                <article class="card hidden" id="tarot-card" aria-live="polite">
+                    <div class="card-content">
+                        <div>
+                            <div class="card-archetype" id="card-archetype">Major Arcana</div>
+                            <div class="card-title" id="card-title">The Stargazing Cowgirl</div>
+                        </div>
+                        <p class="card-meaning" id="card-meaning">
+                            Ready to pull a card? Hit draw and let the desert winds of fate whirl in your favor.
+                        </p>
+                        <div class="card-footer" id="card-footer">Stay Wild, Moon Child</div>
+                    </div>
+                </article>
+            </div>
+            <div class="controls">
+                <button id="shuffle-btn" type="button">Shuffle Deck</button>
+                <button id="draw-btn" type="button">Draw a Card</button>
+                <button id="spread-btn" type="button">Three-Card Spread</button>
+                <button id="reset-btn" type="button">Reset Reading</button>
+            </div>
+        </section>
+
+        <section class="panel vibes" aria-labelledby="vibes-title">
+            <h2 id="vibes-title">Vibe Forecast</h2>
+            <div class="vibe-card">
+                <h3>Daily Energy Pulse</h3>
+                <p id="daily-energy">Sparkling determination with a glitter trail of joy. Yeehaw!</p>
+            </div>
+            <div class="vibe-card">
+                <h3>Cowgirl Compass</h3>
+                <p id="cowgirl-compass">Hold your hat steady—intuition wants to gallop, not trot.</p>
+            </div>
+            <div class="vibe-card">
+                <h3>Barbie Affirmation</h3>
+                <p id="barbie-affirmation">"My rhinestones are my crown, and my courage is my lasso."</p>
+            </div>
+        </section>
+
+        <section class="panel spread" aria-labelledby="spread-title">
+            <h2 id="spread-title">Desert Star Spread</h2>
+            <div class="spread-grid" id="spread-grid" data-mode="idle">
+                <div class="spread-step">
+                    <strong>Past Trail</strong>
+                    <div class="spread-detail">
+                        <span class="spread-card-name" id="spread-past-name">Awaiting Destiny</span>
+                        <p class="spread-card-meaning" id="spread-past-meaning">Your roots shimmer with lessons learned during the last rodeo.</p>
+                    </div>
+                </div>
+                <div class="spread-step">
+                    <strong>Present Rhythm</strong>
+                    <div class="spread-detail">
+                        <span class="spread-card-name" id="spread-present-name">Neon Now</span>
+                        <p class="spread-card-meaning" id="spread-present-meaning">Your boots tap out a confident beat in tonight's neon dust.</p>
+                    </div>
+                </div>
+                <div class="spread-step">
+                    <strong>Future Horizon</strong>
+                    <div class="spread-detail">
+                        <span class="spread-card-name" id="spread-future-name">Rising Horizon</span>
+                        <p class="spread-card-meaning" id="spread-future-meaning">A comet tail guides you to the next star-studded adventure.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel history" aria-labelledby="history-title">
+            <h2 id="history-title">Rodeo Record</h2>
+            <ul class="history-list" id="history-list">
+                <li class="empty-history">No cards drawn yet—shuffle the cosmos!</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        Dreamed by the Cosmic Cowgirl Collective · Powered by glitter, grit, and good vibes
+    </footer>
+
+    <script>
+        const tarotDeck = [
+            {
+                name: 'The Lassoed Star',
+                archetype: 'Major Arcana',
+                meaning: 'You are the luminous ringleader of your dreams. Toss your lasso around that goal and reel it in with style.',
+                advice: 'Let your sparkle lead the way.',
+                vibes: {
+                    energy: 'It is a night for bold wishes and dazzling entrances.',
+                    compass: 'Step into the arena; the spotlight already knows your name.',
+                    affirmation: '"I rope the constellations with rhinestone intention."',
+                    spread: {
+                        past: 'You learned how to shine without permission.',
+                        present: 'You glow unapologetically, igniting every room.',
+                        future: 'A stage of stardust and applause awaits your next twirl.'
+                    }
+                }
+            },
+            {
+                name: 'The Neon Mustang',
+                archetype: 'Major Arcana',
+                meaning: 'Freedom crackles in your aura. Ride with your heart wide open and let your instincts guide the reins.',
+                advice: 'Gallop beyond the expected.',
+                vibes: {
+                    energy: 'Wild courage ripples through your cosmic veins.',
+                    compass: 'Follow the wind that whistles through the canyon of possibility.',
+                    affirmation: '"My wild heart is painted in glitter."',
+                    spread: {
+                        past: 'You broke free from fences that no longer served you.',
+                        present: 'Your stride is steady, unstoppable, and oh-so-glam.',
+                        future: 'An open range of opportunity beckons with pink sunrise clouds.'
+                    }
+                }
+            },
+            {
+                name: 'The Stardust Sheriff',
+                archetype: 'Major Arcana',
+                meaning: 'Balance your sparkle with wisdom. Enforce boundaries that honor your joy and keep your posse glowing.',
+                advice: 'Hold space with kindness and clarity.',
+                vibes: {
+                    energy: 'Poised leadership with a rhinestone badge.',
+                    compass: 'Wear your crown and hold the line—this town trusts you.',
+                    affirmation: '"I twirl my lariat with love and luminous authority."',
+                    spread: {
+                        past: 'You stood tall when chaos kicked up dust.',
+                        present: 'Your words soothe, and your smile is law.',
+                        future: 'Communities flourish when you ride beside them.'
+                    }
+                }
+            },
+            {
+                name: 'Barbie of the Blazing Sun',
+                archetype: 'Major Arcana',
+                meaning: 'Playfulness is your power. Infuse every plan with creativity, compassion, and a touch of glittery rebellion.',
+                advice: 'Lead with joy and stay curious.',
+                vibes: {
+                    energy: 'Sunbeam optimism soaked in shimmer.',
+                    compass: 'Choose the adventure that makes your heart giggle.',
+                    affirmation: '"I create worlds where everyone sparkles."',
+                    spread: {
+                        past: 'You learned that kindness can be a bold revolution.',
+                        present: 'You weave community through laughter and color.',
+                        future: 'Expect collaborations drenched in light and confetti.'
+                    }
+                }
+            },
+            {
+                name: 'The Rodeo Oracle',
+                archetype: 'Major Arcana',
+                meaning: 'Your intuition is louder than the crowd. Trust the whisper behind the music and the truth beneath the glitter.',
+                advice: 'Listen between the beats.',
+                vibes: {
+                    energy: 'Mystic focus with a sparkling gaze.',
+                    compass: 'Slow your sway—the answer arrives on a soft breeze.',
+                    affirmation: '"My inner knowing wears spurs made of stars."',
+                    spread: {
+                        past: 'Dreams sent you secret blueprints.',
+                        present: 'Signals are appearing in neon everywhere you look.',
+                        future: 'A revelation gallops closer with luminous clarity.'
+                    }
+                }
+            },
+            {
+                name: 'The Cosmic Campfire',
+                archetype: 'Major Arcana',
+                meaning: 'Gather your soul sisters. Storytelling sparks renewal and shared warmth heals the heart.',
+                advice: 'Invite others to the glow.',
+                vibes: {
+                    energy: 'Shared wonder with flickers of nostalgia.',
+                    compass: 'Make space for voices that want to harmonize.',
+                    affirmation: '"I kindle community with glitter and grace."',
+                    spread: {
+                        past: 'You discovered that togetherness softens sorrow.',
+                        present: 'Connection is the ember that keeps you glowing.',
+                        future: 'A new alliance twinkles just beyond the dunes.'
+                    }
+                }
+            },
+            {
+                name: 'Aurora Wrangler',
+                archetype: 'Major Arcana',
+                meaning: 'Harness your focus. With deliberate motion you can braid chaos into artful momentum.',
+                advice: 'Take inspired action in sequins and boots.',
+                vibes: {
+                    energy: 'Disciplined magic swirling like pink auroras.',
+                    compass: 'Channel your willpower into one glittering goal today.',
+                    affirmation: '"I choreograph stardust with precision and passion."',
+                    spread: {
+                        past: 'You practiced your craft until it sung.',
+                        present: 'Your effort aligns with cosmic timing.',
+                        future: 'Mastery opens doors with velvet ropes and velvet skies.'
+                    }
+                }
+            },
+            {
+                name: 'Moonrise Maverick',
+                archetype: 'Major Arcana',
+                meaning: 'Honor your ebb and flow. Emotions are lunar tides guiding you to authentic expression.',
+                advice: 'Feel everything, then ride the wave.',
+                vibes: {
+                    energy: 'Tender strength with a velvet undercurrent.',
+                    compass: 'Write your feelings in starlight ink tonight.',
+                    affirmation: '"I am both the moonlight and the open range."',
+                    spread: {
+                        past: 'You survived storms by dancing in the rain.',
+                        present: 'Your sensitivity is a compass of silver light.',
+                        future: 'Expect a dreamy invitation to deepen your artistry.'
+                    }
+                }
+            }
+        ];
+
+        const cardElement = document.getElementById('tarot-card');
+        const cardTitle = document.getElementById('card-title');
+        const cardMeaning = document.getElementById('card-meaning');
+        const cardFooter = document.getElementById('card-footer');
+        const cardArchetype = document.getElementById('card-archetype');
+
+        const dailyEnergy = document.getElementById('daily-energy');
+        const cowgirlCompass = document.getElementById('cowgirl-compass');
+        const barbieAffirmation = document.getElementById('barbie-affirmation');
+
+        const spreadGrid = document.getElementById('spread-grid');
+        const spreadElements = {
+            past: {
+                name: document.getElementById('spread-past-name'),
+                meaning: document.getElementById('spread-past-meaning'),
+            },
+            present: {
+                name: document.getElementById('spread-present-name'),
+                meaning: document.getElementById('spread-present-meaning'),
+            },
+            future: {
+                name: document.getElementById('spread-future-name'),
+                meaning: document.getElementById('spread-future-meaning'),
+            },
+        };
+
+        const historyList = document.getElementById('history-list');
+        const shuffleButton = document.getElementById('shuffle-btn');
+        const drawButton = document.getElementById('draw-btn');
+        const drawSpreadButton = document.getElementById('spread-btn');
+        const resetButton = document.getElementById('reset-btn');
+
+        const initialVibes = {
+            energy: 'Sparkling determination with a glitter trail of joy. Yeehaw!',
+            compass: 'Hold your hat steady—intuition wants to gallop, not trot.',
+            affirmation: '"My rhinestones are my crown, and my courage is my lasso."',
+        };
+
+        const spreadDefaults = {
+            past: {
+                name: 'Awaiting Destiny',
+                meaning: 'Your roots shimmer with lessons learned during the last rodeo.',
+            },
+            present: {
+                name: 'Neon Now',
+                meaning: 'Your boots tap out a confident beat in tonight\'s neon dust.',
+            },
+            future: {
+                name: 'Rising Horizon',
+                meaning: 'A comet tail guides you to the next star-studded adventure.',
+            },
+        };
+
+        let deck = [...tarotDeck];
+        let history = [];
+
+        const timeFormatter = new Intl.DateTimeFormat([], { hour: 'numeric', minute: '2-digit' });
+
+        function setVibes(card) {
+            if (!card) {
+                dailyEnergy.textContent = initialVibes.energy;
+                cowgirlCompass.textContent = initialVibes.compass;
+                barbieAffirmation.textContent = initialVibes.affirmation;
+
+                return;
+            }
+
+            dailyEnergy.textContent = card.vibes.energy;
+            cowgirlCompass.textContent = card.vibes.compass;
+            barbieAffirmation.textContent = card.vibes.affirmation;
+        }
+
+        function setSpreadMode(mode) {
+            spreadGrid.dataset.mode = mode;
+        }
+
+        function renderSpreadFromCard(card) {
+            setSpreadMode(card ? 'single' : 'idle');
+
+            ['past', 'present', 'future'].forEach((slot) => {
+                const target = spreadElements[slot];
+                if (card) {
+                    target.name.textContent = card.name;
+                    target.meaning.textContent = card.vibes.spread[slot];
+                } else {
+                    target.name.textContent = spreadDefaults[slot].name;
+                    target.meaning.textContent = spreadDefaults[slot].meaning;
+                }
+            });
+        }
+
+        function renderSpreadFromCards(cards) {
+            setSpreadMode('multi');
+
+            ['past', 'present', 'future'].forEach((slot, index) => {
+                const target = spreadElements[slot];
+                const card = cards[index];
+                target.name.textContent = card.name;
+                target.meaning.textContent = card.vibes.spread[slot];
+            });
+        }
+
+        function renderCard(card) {
+            if (!card) {
+                cardElement.classList.add('hidden');
+                cardElement.classList.remove('active');
+                setVibes(null);
+
+                return;
+            }
+
+            cardElement.classList.remove('hidden');
+            requestAnimationFrame(() => cardElement.classList.add('active'));
+
+            cardTitle.textContent = card.name;
+            cardMeaning.textContent = card.meaning;
+            cardFooter.textContent = card.advice;
+            cardArchetype.textContent = card.archetype;
+
+            setVibes(card);
+        }
+
+        function renderHistory() {
+            historyList.innerHTML = '';
+
+            if (!history.length) {
+                historyList.innerHTML = '<li class="empty-history">No cards drawn yet—shuffle the cosmos!</li>';
+
+                return;
+            }
+
+            history.forEach((entry) => {
+                const item = document.createElement('li');
+
+                const header = document.createElement('div');
+                header.className = 'history-header';
+
+                const title = document.createElement('span');
+                title.className = 'history-entry-title';
+                title.textContent = `${entry.name} — ${entry.advice}`;
+
+                const stamp = document.createElement('time');
+                stamp.className = 'history-timestamp';
+                stamp.dateTime = entry.timestamp.toISOString();
+                stamp.textContent = timeFormatter.format(entry.timestamp);
+
+                header.appendChild(title);
+                header.appendChild(stamp);
+                item.appendChild(header);
+
+                const meaningBlock = document.createElement('div');
+                meaningBlock.className = 'history-meaning';
+
+                if (Array.isArray(entry.meaning)) {
+                    entry.meaning.forEach((line) => {
+                        const lineEl = document.createElement('span');
+                        lineEl.textContent = line;
+                        meaningBlock.appendChild(lineEl);
+                    });
+                } else {
+                    meaningBlock.textContent = entry.meaning;
+                }
+
+                item.appendChild(meaningBlock);
+                historyList.appendChild(item);
+            });
+        }
+
+        function pushHistory(entry) {
+            history.unshift(entry);
+            if (history.length > 5) {
+                history.length = 5;
+            }
+            renderHistory();
+        }
+
+        function shuffleDeck(options = {}) {
+            const { silent = false } = options;
+            for (let i = deck.length - 1; i > 0; i -= 1) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [deck[i], deck[j]] = [deck[j], deck[i]];
+            }
+            if (!silent) {
+                cardElement.classList.remove('active');
+                cardElement.classList.add('hidden');
+            }
+        }
+
+        function ensureDeck(count = 1) {
+            if (deck.length < count) {
+                deck = [...tarotDeck];
+                shuffleDeck({ silent: true });
+            }
+        }
+
+        function drawCard() {
+            ensureDeck();
+            const drawn = deck.pop();
+
+            renderCard(drawn);
+            renderSpreadFromCard(drawn);
+            pushHistory({
+                type: 'single',
+                name: drawn.name,
+                advice: drawn.advice,
+                meaning: drawn.meaning,
+                timestamp: new Date(),
+            });
+        }
+
+        function drawSpread() {
+            ensureDeck(3);
+            const cards = [];
+            for (let i = 0; i < 3; i += 1) {
+                cards.push(deck.pop());
+            }
+
+            const [pastCard, presentCard, futureCard] = cards;
+
+            renderCard(presentCard);
+            renderSpreadFromCards(cards);
+            pushHistory({
+                type: 'spread',
+                name: 'Three-Card Rodeo Spread',
+                advice: `${pastCard.name} • ${presentCard.name} • ${futureCard.name}`,
+                meaning: [
+                    `Past Trail: ${pastCard.vibes.spread.past}`,
+                    `Present Rhythm: ${presentCard.vibes.spread.present}`,
+                    `Future Horizon: ${futureCard.vibes.spread.future}`,
+                ],
+                timestamp: new Date(),
+            });
+        }
+
+        function resetReading() {
+            deck = [...tarotDeck];
+            shuffleDeck({ silent: true });
+            history = [];
+            renderHistory();
+            renderCard(null);
+            renderSpreadFromCard(null);
+        }
+
+        shuffleButton.addEventListener('click', () => {
+            deck = [...tarotDeck];
+            shuffleDeck();
+            history = [];
+            renderHistory();
+            renderCard(null);
+            renderSpreadFromCard(null);
+        });
+        drawButton.addEventListener('click', drawCard);
+        drawSpreadButton.addEventListener('click', drawSpread);
+        resetButton.addEventListener('click', resetReading);
+
+        resetReading();
+    </script>
+</body>
+</html>
